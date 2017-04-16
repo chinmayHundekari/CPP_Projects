@@ -5,3 +5,4 @@ googletest/
 *.o
 *.a
 *.swp
+!Makefile
