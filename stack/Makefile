@@ -42,12 +42,14 @@ SRC = $(wildcard *.cc)
 SRC := $(filter-out $(SRC_TESTS), $(SRC))
 INC = $(wildcard *.h)
 OBJ = $(SRC:%.cc=%.o)
-
+mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
+binary := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
+binary_test := $(binary)_test
 # House-keeping build targets.
 
-all : stack
+all : $(binary)
 
-test : stack_test
+test : $(binary_test)
 
 clean :
 	rm -f $(TESTS) gtest.a gtest_main.a *.o
@@ -92,10 +94,10 @@ gtest_main.a : gtest-all.o gtest_main.o
 #sample1_unittest : sample1.o sample1_unittest.o gtest_main.a
 #	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
-stack_test : $(OBJ_TESTS) $(OBJ) gtest_main.a
+$(binary_test) : $(OBJ_TESTS) $(OBJ) gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
-stack : $(OBJ)
+$(binary) : $(OBJ)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
 $(OBJ_TESTS) : $(SRC_TESTS) $(INC) $(GTEST_HEADERS)
